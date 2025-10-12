@@ -1,0 +1,466 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: rides
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+
+
+
+# settings.py
+
+INSTALLED_APPS += [
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'rides',  # your app
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+from datetime import timedelta
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+}
+
+# Redis config
+REDIS_URL = "redis://localhost:6379/0"
+
+
+# rides/models.py
+from django.conf import settings
+from django.db import models
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    is_rider = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username} profile"
+
+
+
+# rides/models.py (continue)
+class Ride(models.Model):
+    rider = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rides_as_rider', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='rides_as_user', on_delete=models.CASCADE)
+    pickup = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    requested_at = models.DateTimeField()
+    accepted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Ride {self.id} by {self.user} accepted by {self.rider}"
+
+
+
+
+
+# rides/redis_utils.py
+import json
+import time
+import uuid
+from django.conf import settings
+import redis
+
+r = redis.StrictRedis.from_url(settings.REDIS_URL, decode_responses=True)
+
+PENDING_SET = "rides:available"   # sorted set: member=request_id score=expiry_ts
+KEY_PREFIX = "rides:request:"     # full key: rides:request:{request_id}
+TTL_SECONDS = 120                 # 2 minutes
+
+def create_pending_request(user_id, pickup, destination):
+    request_id = str(uuid.uuid4())
+    now = int(time.time())
+    expiry = now + TTL_SECONDS
+    payload = {
+        "id": request_id,
+        "user_id": user_id,
+        "pickup": pickup,
+        "destination": destination,
+        "requested_at": now
+    }
+    key = KEY_PREFIX + request_id
+    # store JSON string with TTL
+    p = r.pipeline()
+    p.set(key, json.dumps(payload))
+    p.expire(key, TTL_SECONDS)
+    p.zadd(PENDING_SET, {request_id: expiry})
+    p.execute()
+    return payload
+
+def list_pending_requests():
+    now = int(time.time())
+    # remove expired from sorted set (so set remains clean)
+    r.zremrangebyscore(PENDING_SET, 0, now)
+    # get remaining ids
+    ids = r.zrange(PENDING_SET, 0, -1)
+    results = []
+    if not ids:
+        return results
+    p = r.pipeline()
+    for _id in ids:
+        p.get(KEY_PREFIX + _id)
+    vals = p.execute()
+    for v in vals:
+        if v:  # if the key still exists
+            results.append(json.loads(v))
+    return results
+
+# Atomic accept: get-and-delete if exists (Lua script)
+ACCEPT_LUA = """
+local key = KEYS[1]
+local set = KEYS[2]
+local id = ARGV[1]
+local val = redis.call('GET', key)
+if not val then
+  return nil
+end
+-- delete the key and remove from set
+redis.call('DEL', key)
+redis.call('ZREM', set, id)
+return val
+"""
+
+def accept_request_atomic(request_id):
+    key = KEY_PREFIX + request_id
+    res = r.eval(ACCEPT_LUA, 2, key, PENDING_SET, request_id)
+    if res is None:
+        return None
+    return json.loads(res)
+
+
+
+
+
+
+# rides/permissions.py
+from rest_framework.permissions import BasePermission
+
+class IsRider(BasePermission):
+    def has_permission(self, request, view):
+        try:
+            return bool(request.user and request.user.is_authenticated and request.user.userprofile.is_rider)
+        except:
+            return False
+
+class IsNormalUser(BasePermission):
+    def has_permission(self, request, view):
+        try:
+            return bool(request.user and request.user.is_authenticated and not request.user.userprofile.is_rider)
+        except:
+            return False
+
+
+
+
+
+
+
+
+# rides/serializers.py
+from rest_framework import serializers
+from .models import Ride
+
+class PendingRequestSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    user_id = serializers.IntegerField()
+    pickup = serializers.CharField()
+    destination = serializers.CharField()
+    requested_at = serializers.IntegerField()
+
+class CreateRequestSerializer(serializers.Serializer):
+    pickup = serializers.CharField()
+    destination = serializers.CharField()
+
+class RideSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ride
+        fields = '__all__'
+
+
+
+
+
+
+
+# rides/views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, generics
+from rest_framework.permissions import IsAuthenticated
+from django.utils import timezone
+from .permissions import IsRider, IsNormalUser
+from .serializers import CreateRequestSerializer, PendingRequestSerializer, RideSerializer
+from .redis_utils import create_pending_request, list_pending_requests, accept_request_atomic
+from .models import Ride
+import datetime
+
+class CreateRideRequestView(APIView):
+    permission_classes = [IsAuthenticated, IsNormalUser]
+
+    def post(self, request):
+        serializer = CreateRequestSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        pickup = serializer.validated_data['pickup']
+        destination = serializer.validated_data['destination']
+        payload = create_pending_request(request.user.id, pickup, destination)
+        # Only send back limited info (including the id) to the user for reference
+        return Response(payload, status=status.HTTP_201_CREATED)
+
+class RiderListPendingView(APIView):
+    permission_classes = [IsAuthenticated, IsRider]
+
+    def get(self, request):
+        pending = list_pending_requests()
+        serializer = PendingRequestSerializer(pending, many=True)
+        return Response(serializer.data)
+
+class RiderAcceptView(APIView):
+    permission_classes = [IsAuthenticated, IsRider]
+
+    def post(self, request, request_id):
+        # attempt atomic accept
+        accepted_payload = accept_request_atomic(request_id)
+        if not accepted_payload:
+            return Response({"detail": "Request not available (expired or already accepted)."}, status=status.HTTP_404_NOT_FOUND)
+
+        # create Ride record in DB
+        requested_at = datetime.datetime.fromtimestamp(accepted_payload['requested_at'], tz=datetime.timezone.utc)
+        ride = Ride.objects.create(
+            user_id=accepted_payload['user_id'],
+            rider=request.user,
+            pickup=accepted_payload['pickup'],
+            destination=accepted_payload['destination'],
+            requested_at=requested_at
+        )
+        serializer = RideSerializer(ride)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+
+
+
+
+
+
+
+# rides/urls.py
+from django.urls import path
+from .views import CreateRideRequestView, RiderListPendingView, RiderAcceptView
+
+urlpatterns = [
+    path('requests/', CreateRideRequestView.as_view(), name='create_request'),
+    path('rider/requests/', RiderListPendingView.as_view(), name='rider_list_pending'),
+    path('rider/accept/<str:request_id>/', RiderAcceptView.as_view(), name='rider_accept'),
+]
+
+
+
+
+
+
+
+
+
+
+import json, time, uuid, redis
+from django.conf import settings
+
+r = redis.StrictRedis.from_url(settings.REDIS_URL, decode_responses=True)
+
+PENDING_SET = "rides:available"
+KEY_PREFIX = "rides:request:"
+TTL_SECONDS = 120
+
+def create_pending_request(user_id, pickup, destination):
+    request_id = str(uuid.uuid4())
+    now = int(time.time())
+    expiry = now + TTL_SECONDS
+    payload = {
+        "id": request_id,
+        "user_id": user_id,
+        "pickup": pickup,
+        "destination": destination,
+        "requested_at": now,
+    }
+    key = KEY_PREFIX + request_id
+    p = r.pipeline()
+    p.set(key, json.dumps(payload))
+    p.expire(key, TTL_SECONDS)
+    p.zadd(PENDING_SET, {request_id: expiry})
+    p.execute()
+    return payload
+
+def list_pending_requests():
+    now = int(time.time())
+    r.zremrangebyscore(PENDING_SET, 0, now)
+    ids = r.zrange(PENDING_SET, 0, -1)
+    results = []
+    if not ids:
+        return results
+    p = r.pipeline()
+    for _id in ids:
+        p.get(KEY_PREFIX + _id)
+    vals = p.execute()
+    for v in vals:
+        if v:
+            results.append(json.loads(v))
+    return results
+
+def accept_request_simple(request_id):
+    key = KEY_PREFIX + request_id
+    val = r.get(key)
+    if not val:
+        return None
+    r.delete(key)
+    r.zrem(PENDING_SET, request_id)
+    return json.loads(val)
+
+
+
+
+
+import requests
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+
+class GoogleLoginAPIView(APIView):
+   
+
+    def post(self, request):
+        access_token = request.data.get("access_token")
+        if not access_token:
+            return Response({"error": "Access token required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        
+        try:
+            google_response = requests.get(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                headers={"Authorization": f"Bearer {access_token}"}
+            )
+        except requests.RequestException as e:
+            return Response({"error": f"Google connection failed: {str(e)}"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+        if google_response.status_code != 200:
+            return Response({"error": "Invalid or expired Google token"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Extract user info
+        user_data = google_response.json()
+        email = user_data.get("email")
+        name = user_data.get("name") or email.split("@")[0]
+
+        if not email:
+            return Response({"error": "Email not provided by Google"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create or get user
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={"username": name}
+        )
+
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        data = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "username": user.username,
+            "email": user.email,
+            "is_new_user": created
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+
+
+        from django.core.management.base import BaseCommand
+        from myapp.model import student
+
+
+        class BaseCommand(BaseCommand):
+           help = 'Load JSON data into Student table'
+
+           def handle(self,*list,**data):
+              with opne('mydata.json') as f:
+                new_value = json.loads(f)
+
+                for item in new_value:
+                  student.objects.create(**item)
+                  self.stdout.write(self.style.SUCCESS('Data inserted successfully!'))
+                  
+
+
+AUTH_PASSWORD_VALIDATORS = [
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+]
+
+
+
+class RegistrationApiView(APIView):
+    def post(self, request):
+        serializer = serializers.UserSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            
+            # Check if user already exists
+            user, created = User.objects.get_or_create(email=email, defaults=serializer.validated_data)
+            
+            if not created:
+                # If user exists but not active, resend verification email
+                if not user.is_active:
+                    token = email_verification_token.make_token(user)
+                    current_site = get_current_site(request).domain
+                    link = f"http://{current_site}/verify-email/{user.pk}/{token}/"
+                    send_mail(
+                        subject="Verify your email",
+                        message=f"Click this link to verify your email: {link}",
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[email],
+                        fail_silently=False
+                    )
+                    return Response({"message": "Verification email resent. Check your inbox."}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"error": "This email is already registered."}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # For new users, generate token and send verification email
+            token = email_verification_token.make_token(user)
+            current_site = get_current_site(request).domain
+            link = f"http://{current_site}/verify-email/{user.pk}/{token}/"
+            send_mail(
+                subject="Verify your email",
+                message=f"Click this link to verify your email: {link}",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[email],
+                fail_silently=False
+            )
+
+            return Response({"message": "User registered. Check your email to verify."}, status=status.HTTP_201_CREATED)
+
+        # If serializer validation fails
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
