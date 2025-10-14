@@ -1,23 +1,27 @@
 from rest_framework.serializers import ModelSerializer
-from auth_api.models import User
+from auth_api.models import User,SignupRequest
+from rest_framework import serializers
 
 
 class UserSerializer(ModelSerializer):
    class Meta:
       model = User
-      fields = ['email','full_name','mobile_no','password']
+      fields = ['email','full_name','mobile_no','region','password']
       extra_kwargs = {
          'password' : {'write_only' : True}
       }
 
-   def create(self,validated_data):
-      user = User.objects.create_user(
-         email = validated_data['email'],
-         full_name=validated_data['full_name'],
-         mobile_no = validated_data['mobile_no'],
-         password = validated_data['password']
-      )   
 
-      user.is_active = False
-      user.save()
-      return user
+   
+
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField()
+
+
+
+class SignUpRequestSerilizer(ModelSerializer):
+   class Meta:
+      model = SignupRequest
+      fields = ['email','full_name','mobile_no','region','password']

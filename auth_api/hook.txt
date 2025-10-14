@@ -464,3 +464,40 @@ class RegistrationApiView(APIView):
 
         # If serializer validation fails
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+        https://developers.google.com/oauthplayground/
+
+
+
+
+
+
+
+
+        docker exec -it kafka bash
+        
+        kafka-storage random-uuid
+
+
+        kafka-storage format \
+  --config /etc/kafka/kafka.properties \
+  --cluster-id VvJ2m3s8S9aG6JcZk9K7uQ \
+  --ignore-formatted
+
+
+
+  kafka-server-start /etc/kafka/kraft/server.properties
+
+  kafka-topics --create --topic test-topic --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+
+kafka-console-producer --topic test-topic --bootstrap-server localhost:9092
+
+kafka-console-consumer --topic test-topic --bootstrap-server localhost:9092 --from-beginning
+
+
+
+docker run --rm confluentinc/cp-kafka:7.6.2 kafka-storage random-uuid

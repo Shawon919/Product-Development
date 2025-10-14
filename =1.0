@@ -1,0 +1,177 @@
+Requirement already satisfied: Django in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (5.2.7)
+Requirement already satisfied: djangorestframework in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (3.16.1)
+Collecting channels
+  Downloading channels-4.3.1-py3-none-any.whl.metadata (4.6 kB)
+Collecting channels_redis
+  Downloading channels_redis-4.3.0-py3-none-any.whl.metadata (13 kB)
+Collecting daphne
+  Downloading daphne-4.2.1-py3-none-any.whl.metadata (1.7 kB)
+Requirement already satisfied: python-decouple in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (3.8)
+Requirement already satisfied: djangorestframework-simplejwt in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (5.5.1)
+Collecting psycopg2-binary
+  Downloading psycopg2_binary-2.9.11-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (4.9 kB)
+Collecting django-cors-headers
+  Downloading django_cors_headers-4.9.0-py3-none-any.whl.metadata (16 kB)
+Requirement already satisfied: celery in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (5.5.3)
+Collecting redis
+  Downloading redis-6.4.0-py3-none-any.whl.metadata (10 kB)
+Requirement already satisfied: confluent-kafka in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (2.11.1)
+Collecting Pillow
+  Downloading pillow-11.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.0 kB)
+Requirement already satisfied: social-auth-app-django in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (5.5.1)
+Collecting google-auth
+  Downloading google_auth-2.41.1-py2.py3-none-any.whl.metadata (6.6 kB)
+Collecting google-auth-oauthlib
+  Downloading google_auth_oauthlib-1.2.2-py3-none-any.whl.metadata (2.7 kB)
+Collecting google-auth-httplib2
+  Downloading google_auth_httplib2-0.2.0-py2.py3-none-any.whl.metadata (2.2 kB)
+Collecting django-allauth
+  Downloading django_allauth-65.12.0.tar.gz (2.0 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.0/2.0 MB 1.6 MB/s eta 0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting dj-rest-auth
+  Downloading dj-rest-auth-7.0.1.tar.gz (220 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 220.5/220.5 kB 5.2 MB/s eta 0:00:00
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting python-dotenv
+  Using cached python_dotenv-1.1.1-py3-none-any.whl.metadata (24 kB)
+Requirement already satisfied: asgiref>=3.8.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from Django) (3.10.0)
+Requirement already satisfied: sqlparse>=0.3.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from Django) (0.5.3)
+Collecting msgpack~=1.0 (from channels_redis)
+  Downloading msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (8.1 kB)
+Collecting autobahn>=22.4.2 (from daphne)
+  Downloading autobahn-24.4.2-py2.py3-none-any.whl.metadata (18 kB)
+Collecting twisted>=22.4 (from twisted[tls]>=22.4->daphne)
+  Downloading twisted-25.5.0-py3-none-any.whl.metadata (22 kB)
+Requirement already satisfied: pyjwt>=1.7.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from djangorestframework-simplejwt) (2.10.1)
+Requirement already satisfied: billiard<5.0,>=4.2.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (4.2.2)
+Requirement already satisfied: kombu<5.6,>=5.5.2 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (5.5.4)
+Requirement already satisfied: vine<6.0,>=5.1.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (5.1.0)
+Requirement already satisfied: click<9.0,>=8.1.2 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (8.3.0)
+Requirement already satisfied: click-didyoumean>=0.3.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (0.3.1)
+Requirement already satisfied: click-repl>=0.2.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (0.3.0)
+Requirement already satisfied: click-plugins>=1.1.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (1.1.1.2)
+Requirement already satisfied: python-dateutil>=2.8.2 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from celery) (2.9.0.post0)
+Requirement already satisfied: social-auth-core~=4.4 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from social-auth-app-django) (4.8.0)
+Collecting cachetools<7.0,>=2.0.0 (from google-auth)
+  Using cached cachetools-6.2.0-py3-none-any.whl.metadata (5.4 kB)
+Collecting pyasn1-modules>=0.2.1 (from google-auth)
+  Downloading pyasn1_modules-0.4.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting rsa<5,>=3.1.4 (from google-auth)
+  Downloading rsa-4.9.1-py3-none-any.whl.metadata (5.6 kB)
+Requirement already satisfied: requests-oauthlib>=0.7.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from google-auth-oauthlib) (2.0.0)
+Collecting httplib2>=0.19.0 (from google-auth-httplib2)
+  Downloading httplib2-0.31.0-py3-none-any.whl.metadata (2.2 kB)
+Collecting txaio>=21.2.1 (from autobahn>=22.4.2->daphne)
+  Downloading txaio-25.9.2-py3-none-any.whl.metadata (7.3 kB)
+Requirement already satisfied: cryptography>=3.4.6 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from autobahn>=22.4.2->daphne) (46.0.2)
+Collecting hyperlink>=21.0.0 (from autobahn>=22.4.2->daphne)
+  Downloading hyperlink-21.0.0-py2.py3-none-any.whl.metadata (1.5 kB)
+Collecting setuptools (from autobahn>=22.4.2->daphne)
+  Using cached setuptools-80.9.0-py3-none-any.whl.metadata (6.6 kB)
+Requirement already satisfied: prompt-toolkit>=3.0.36 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from click-repl>=0.2.0->celery) (3.0.52)
+Collecting pyparsing<4,>=3.0.4 (from httplib2>=0.19.0->google-auth-httplib2)
+  Downloading pyparsing-3.2.5-py3-none-any.whl.metadata (5.0 kB)
+Requirement already satisfied: amqp<6.0.0,>=5.1.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from kombu<5.6,>=5.5.2->celery) (5.3.1)
+Requirement already satisfied: tzdata>=2025.2 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from kombu<5.6,>=5.5.2->celery) (2025.2)
+Requirement already satisfied: packaging in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from kombu<5.6,>=5.5.2->celery) (25.0)
+Collecting pyasn1<0.7.0,>=0.6.1 (from pyasn1-modules>=0.2.1->google-auth)
+  Downloading pyasn1-0.6.1-py3-none-any.whl.metadata (8.4 kB)
+Requirement already satisfied: six>=1.5 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from python-dateutil>=2.8.2->celery) (1.17.0)
+Requirement already satisfied: oauthlib>=3.0.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib) (3.3.1)
+Requirement already satisfied: requests>=2.0.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from requests-oauthlib>=0.7.0->google-auth-oauthlib) (2.32.5)
+Requirement already satisfied: defusedxml>=0.7.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from social-auth-core~=4.4->social-auth-app-django) (0.7.1)
+Requirement already satisfied: python3-openid>=3.2.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from social-auth-core~=4.4->social-auth-app-django) (3.2.0)
+Collecting attrs>=22.2.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Downloading attrs-25.4.0-py3-none-any.whl.metadata (10 kB)
+Collecting automat>=24.8.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Downloading automat-25.4.16-py3-none-any.whl.metadata (8.4 kB)
+Collecting constantly>=15.1 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Downloading constantly-23.10.4-py3-none-any.whl.metadata (1.8 kB)
+Collecting incremental>=24.7.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Downloading incremental-24.7.2-py3-none-any.whl.metadata (8.1 kB)
+Collecting typing-extensions>=4.2.0 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Using cached typing_extensions-4.15.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting zope-interface>=5 (from twisted>=22.4->twisted[tls]>=22.4->daphne)
+  Downloading zope_interface-8.0.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl.metadata (44 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 44.9/44.9 kB 2.2 MB/s eta 0:00:00
+Requirement already satisfied: idna>=2.4 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from twisted[tls]>=22.4->daphne) (3.10)
+Collecting pyopenssl>=21.0.0 (from twisted[tls]>=22.4->daphne)
+  Downloading pyopenssl-25.3.0-py3-none-any.whl.metadata (17 kB)
+Collecting service-identity>=18.1.0 (from twisted[tls]>=22.4->daphne)
+  Downloading service_identity-24.2.0-py3-none-any.whl.metadata (5.1 kB)
+Requirement already satisfied: cffi>=2.0.0 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from cryptography>=3.4.6->autobahn>=22.4.2->daphne) (2.0.0)
+Requirement already satisfied: wcwidth in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from prompt-toolkit>=3.0.36->click-repl>=0.2.0->celery) (0.2.14)
+Requirement already satisfied: charset_normalizer<4,>=2 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from requests>=2.0.0->requests-oauthlib>=0.7.0->google-auth-oauthlib) (3.4.3)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from requests>=2.0.0->requests-oauthlib>=0.7.0->google-auth-oauthlib) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from requests>=2.0.0->requests-oauthlib>=0.7.0->google-auth-oauthlib) (2025.10.5)
+Requirement already satisfied: pycparser in /home/shawon/.local/share/virtualenvs/Project_Development-Cp2m_N2c/lib/python3.12/site-packages (from cffi>=2.0.0->cryptography>=3.4.6->autobahn>=22.4.2->daphne) (2.23)
+Downloading channels-4.3.1-py3-none-any.whl (31 kB)
+Downloading channels_redis-4.3.0-py3-none-any.whl (20 kB)
+Downloading daphne-4.2.1-py3-none-any.whl (29 kB)
+Downloading psycopg2_binary-2.9.11-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (4.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.2/4.2 MB 8.3 MB/s eta 0:00:00
+Downloading django_cors_headers-4.9.0-py3-none-any.whl (12 kB)
+Downloading redis-6.4.0-py3-none-any.whl (279 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 279.8/279.8 kB 6.8 MB/s eta 0:00:00
+Downloading pillow-11.3.0-cp312-cp312-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (6.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 6.6/6.6 MB 9.5 MB/s eta 0:00:00
+Downloading google_auth-2.41.1-py2.py3-none-any.whl (221 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 221.3/221.3 kB 8.2 MB/s eta 0:00:00
+Downloading google_auth_oauthlib-1.2.2-py3-none-any.whl (19 kB)
+Downloading google_auth_httplib2-0.2.0-py2.py3-none-any.whl (9.3 kB)
+Using cached python_dotenv-1.1.1-py3-none-any.whl (20 kB)
+Downloading autobahn-24.4.2-py2.py3-none-any.whl (666 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 667.0/667.0 kB 5.5 MB/s eta 0:00:00
+Using cached cachetools-6.2.0-py3-none-any.whl (11 kB)
+Downloading httplib2-0.31.0-py3-none-any.whl (91 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 91.1/91.1 kB 6.5 MB/s eta 0:00:00
+Downloading msgpack-1.1.2-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (427 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 427.6/427.6 kB 6.3 MB/s eta 0:00:00
+Downloading pyasn1_modules-0.4.2-py3-none-any.whl (181 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 181.3/181.3 kB 6.8 MB/s eta 0:00:00
+Downloading rsa-4.9.1-py3-none-any.whl (34 kB)
+Downloading twisted-25.5.0-py3-none-any.whl (3.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 8.4 MB/s eta 0:00:00
+Downloading attrs-25.4.0-py3-none-any.whl (67 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 67.6/67.6 kB 8.5 MB/s eta 0:00:00
+Downloading automat-25.4.16-py3-none-any.whl (42 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.8/42.8 kB 5.4 MB/s eta 0:00:00
+Downloading constantly-23.10.4-py3-none-any.whl (13 kB)
+Downloading hyperlink-21.0.0-py2.py3-none-any.whl (74 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 74.6/74.6 kB 6.7 MB/s eta 0:00:00
+Downloading incremental-24.7.2-py3-none-any.whl (20 kB)
+Downloading pyasn1-0.6.1-py3-none-any.whl (83 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 83.1/83.1 kB 5.7 MB/s eta 0:00:00
+Downloading pyopenssl-25.3.0-py3-none-any.whl (57 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 57.3/57.3 kB 5.7 MB/s eta 0:00:00
+Downloading pyparsing-3.2.5-py3-none-any.whl (113 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 113.9/113.9 kB 7.8 MB/s eta 0:00:00
+Downloading service_identity-24.2.0-py3-none-any.whl (11 kB)
+Using cached setuptools-80.9.0-py3-none-any.whl (1.2 MB)
+Downloading txaio-25.9.2-py3-none-any.whl (31 kB)
+Using cached typing_extensions-4.15.0-py3-none-any.whl (44 kB)
+Downloading zope_interface-8.0.1-cp312-cp312-manylinux1_x86_64.manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_5_x86_64.whl (264 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 264.7/264.7 kB 8.4 MB/s eta 0:00:00
+Building wheels for collected packages: django-allauth, dj-rest-auth
+  Building wheel for django-allauth (pyproject.toml): started
+  Building wheel for django-allauth (pyproject.toml): finished with status 'done'
+  Created wheel for django-allauth: filename=django_allauth-65.12.0-py3-none-any.whl size=1772036 sha256=0edfc7bd78c26db79d58596df4f3b31d52ba025aff5bb6557ba63eedd3dfc038
+  Stored in directory: /home/shawon/.cache/pip/wheels/7b/07/38/5571203b854147dd3b98dbfa0507e1169316863ce92961bef8
+  Building wheel for dj-rest-auth (pyproject.toml): started
+  Building wheel for dj-rest-auth (pyproject.toml): finished with status 'done'
+  Created wheel for dj-rest-auth: filename=dj_rest_auth-7.0.1-py2.py3-none-any.whl size=251344 sha256=4164f8b644c34d84c15294e37fc7fa8a3a4bc0c8fea84cdddf62ae2fa5844702
+  Stored in directory: /home/shawon/.cache/pip/wheels/07/e5/7b/eec475bc23d3f13cfbf212867117acda336655d815ddcf5dfe
+Successfully built django-allauth dj-rest-auth
+Installing collected packages: zope-interface, typing-extensions, txaio, setuptools, redis, python-dotenv, pyparsing, pyasn1, psycopg2-binary, Pillow, msgpack, hyperlink, constantly, cachetools, automat, attrs, rsa, pyasn1-modules, incremental, httplib2, django-cors-headers, django-allauth, channels, twisted, service-identity, pyopenssl, google-auth, dj-rest-auth, channels_redis, autobahn, google-auth-oauthlib, google-auth-httplib2, daphne
+Successfully installed Pillow-11.3.0 attrs-25.4.0 autobahn-24.4.2 automat-25.4.16 cachetools-6.2.0 channels-4.3.1 channels_redis-4.3.0 constantly-23.10.4 daphne-4.2.1 dj-rest-auth-7.0.1 django-allauth-65.12.0 django-cors-headers-4.9.0 google-auth-2.41.1 google-auth-httplib2-0.2.0 google-auth-oauthlib-1.2.2 httplib2-0.31.0 hyperlink-21.0.0 incremental-24.7.2 msgpack-1.1.2 psycopg2-binary-2.9.11 pyasn1-0.6.1 pyasn1-modules-0.4.2 pyopenssl-25.3.0 pyparsing-3.2.5 python-dotenv-1.1.1 redis-6.4.0 rsa-4.9.1 service-identity-24.2.0 setuptools-80.9.0 twisted-25.5.0 txaio-25.9.2 typing-extensions-4.15.0 zope-interface-8.0.1
