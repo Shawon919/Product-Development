@@ -1,3 +1,5 @@
+
+
 services:
   auth_api:
     build: .
@@ -11,20 +13,20 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - new_db
       - redis_db
+      - kafka
     command: >
-      sh -c "sleep 5 &&
-             python manage.py makemigrations auth_api &&
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             daphne -b 0.0.0.0 -p 8000 myproject.asgi:application"
+      sh -c "
+        python manage.py collectstatic --noinput &&
+        daphne -b 0.0.0.0 -p 8000 myproject.asgi:application
+      "
 
-  db:
+  new_db:
     image: postgres:15
-    container_name: auth_db
+    container_name: new_db
     ports:
-      - "5433:5432"
+      - "5436:5432"
     env_file:
       - .env
     volumes:
@@ -36,5 +38,83 @@ services:
     ports:
       - "6377:6379"
 
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    volumes:
+      - zookeeper_data:/bitnami/zookeeper  
+
+
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    ports:
+      - "9092:9092"
+    volumes:
+      - kafka_data:/bitnami/kafka 
+
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A myproject worker --loglevel=INFO
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+      - DJANGO_SETTINGS_MODULE=myproject.settings
+      - CELERY_BROKER_URL=redis://redis_db:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis_db:6379/0
+  
+    depends_on:
+      - redis_db
+      - new_db
+      - auth_api  
+
+
+  celery_beat:
+    build: .
+    container_name: celery_beat
+    command: celery -A myproject beat --loglevel=INFO
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    environment:
+     - DJANGO_SETTINGS_MODULE=myproject.settings
+  
+    depends_on:
+      - redis_db
+      - new_db
+      - auth_api        
+
+
+ 
+
 volumes:
   postgres_data:
+  zookeeper_data:
+  kafka_data:
+  
+
